@@ -379,6 +379,48 @@ unsigned long calc_0_days(int year, byte month, byte day) {
   
   return days;
 }
+//----------------------------------------------------------------
+// 西暦１９７０年１月１日からの日数を返す
+//----------------------------------------------------------------
+unsigned long calc_unix_days(int year, byte month, byte day) {
+    unsigned long days;
+   return calc_0_days(year, month, day) - calc_0_days(1970, 1, 1);
+}
+  
+
+//----------------------------------------------------------------
+// 西暦１９７０年１月１日　００：００：００　からの秒数を返す
+//----------------------------------------------------------------
+unsigned long calc_unix_seconds(int year, byte month, byte day, byte hour, byte minutes, byte second) {
+   unsigned long days;
+    unsigned long seconds;
+  
+    days = calc_unix_days(year, month, day);
+    seconds = days * SECONDS_IN_DAY;
+    seconds += (unsigned long)hour * SECONDS_IN_HOUR;
+    seconds += (unsigned long)minutes * 60;
+    seconds += (unsigned long)second;
+    seconds += -9 * SECONDS_IN_HOUR; // JPN(GMT+9) 日本時間
+  
+    return seconds;
+}
+
+//----------------------------------------------------------------
+// 西暦１９７０年１月１日　００：００：００　からの秒数を返す
+//----------------------------------------------------------------
+unsigned long calc_MakoRiKoBirth_unix_seconds(int year, byte month, byte day, byte hour, byte minutes, byte second) {
+   unsigned long days;
+    unsigned long seconds;
+  
+    days =  calc_MakoRikoBirth_days(year, month, day);
+    seconds = days * SECONDS_IN_DAY;
+    seconds += (unsigned long)hour * SECONDS_IN_HOUR;
+    seconds += (unsigned long)minutes * 60;
+    seconds += (unsigned long)second;
+    seconds += -9 * SECONDS_IN_HOUR; // JPN(GMT+9) 日本時間
+  
+    return seconds;
+}
 
 //----------------------------------------------------------------
 // 西暦2018年1月11日からの日数を返す
@@ -454,8 +496,19 @@ void unix_time_to_date( unsigned long unix_datetime, date_time *tm )
 void Dispaly_MakoRiko(){
     int days = calc_MakoRikoBirth_days(year(), month(), day());
     String bufPre = String("真子 莉子 誕生から ");
-    bufPre.concat(String(days));
-    bufPre.concat(" 日");
+
+    date_time dt ;
+    unsigned long seconds = calc_MakoRiKoBirth_unix_seconds(year(), month(), day(), hour(), minute(), second());
+    unix_time_to_date(seconds, &dt);
+
+    bufPre.concat(String(dt.year));
+    bufPre.concat("年 ");
+       bufPre.concat(String(dt.month));
+    bufPre.concat("月 ");
+    
+    bufPre.concat(String(dt.day));
+    bufPre.concat("日 ");
+
     Serial.print(bufPre);
 //    char[] byteBuf = bufPre.toCharArray();
     //bufPre.getBytes(byteBuf,64);
