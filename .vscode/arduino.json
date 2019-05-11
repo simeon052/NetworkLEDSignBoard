@@ -1,0 +1,5 @@
+{
+    "board": "arduino:avr:megaADK",
+    "port": "COM4",
+    "sketch": "NetworkLEDSignBoard.ino"
+}
